@@ -1,0 +1,162 @@
+<%- include ('partials/header.ejs') %>
+
+
+<body>
+    <% if(loginStatus) { %>
+    <div class="container align-items-center">
+            
+    <!--display results-->
+    <div class="container align-items-center p-3">
+        <h1>Customer Detail</h1>
+        <% if (customers.length > 0) { %>
+        <% customers.forEach((customer, index) => { %>
+        <table class="table table-sm w-100  table-borderless mx-auto p-3">
+            
+            <tbody>
+                <tr><td class="text-black-50">Customer Id</td>
+                    <td><%= customer.customer_id%></td>
+                </tr>
+                <tr>
+                    <td class="text-black-50">First Name</td>
+                    <td><%= customer.first_name %></td>
+               
+                    <td class="text-black-50">Last Name</td>
+                    <td><%= customer.last_name %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">Phone</td>
+                    <td><%= customer.phone %></td>
+               
+                    <td class="text-black-50">Email</td>
+                    <td><%= customer.email %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">Address</td>
+                    <td><%= customer.street %> <%= customer.apt_suite %> </td>
+              
+                    <td class="text-black-50">City</td>
+                    <td><%= customer.city %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">State</td>
+                    <td><%= customer.state %></td>
+                 
+                    <td class="text-black-50">Zip code</td>
+                    <td><%= customer.zip_code %></td>
+                </tr>
+                
+                <tr>    
+                    <td class="text-black-50">Company</td>
+                    <td><%= customer.company %></td>
+                  
+                    <td class="text-black-50">Note</td>
+                    <td><%= customer.note %></td>
+                </tr>
+
+            </tbody>
+            
+
+        </table>
+
+        <div class="mb-3">
+            <a href="/editCustomer/<%= customer.customer_id%>" class="btn btn-primary">Edit</a>
+        </div>
+        <% }) %>
+
+    </div>
+
+    <!--PURCHASE RECORD-->
+    <div class="container align-items-center p-3">
+        <% if (vehicles.length > 0) { %>
+        <h1>Sales Record</h1>
+            <% vehicles.forEach((vehicle, index) => { %>
+        <table class="table table-sm w-100  table-borderless mx-auto p-3">
+            <tbody>
+                <tr>
+                    <td class="text-black-50">Make</td>
+                    <td><%= vehicle.manufacturer %></td>
+                    <td class="text-black-50">Model</td>
+                    <td><%= vehicle.model_name %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">Color</td>
+                    <td><%= vehicle.color %></td>
+                    <td class="text-black-50">Year</td>
+                    <td><%= vehicle.model_year %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">Price</td>
+                    <td><%= vehicle.sold_price %></td>
+                    <td class="text-black-50">Date</td>
+                    <td><%= vehicle.solddate %></td>
+                </tr>
+
+
+            </tbody>
+
+        </table>
+
+        <% })}%>
+
+    </div>
+
+    <!--Matainace record-->
+    <div class="container align-items-center p-3">
+        <% if (services.length > 0) { %>
+            <h1>Service Record</h1>
+                <% services.forEach((service, index) => { %>
+        <table class="table table-sm w-100  table-borderless mx-auto p-3">
+            <tbody>
+                <tr>
+                    <td class="text-black-50">Vehicle</td>
+                    <td><%= service.model_year %>  <%= service.manufacturer %> <%= service.model_name %></td>
+                    
+                </tr>
+                <tr>
+                    <td class="text-black-50">Start Date</td>
+                    <td><%= service.startdate %></td>
+                    <td class="text-black-50">Completion Date</td>
+                    <td><%= service.completiondate %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">Odormeter Reading</td>
+                    <td><%= service.repair_odormeter %></td>
+                    <td class="text-black-50">Labor Charge</td>
+                    <td><%= service.labor_charge %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">Repair Description</td>
+                    <td><%= service.repair_description %></td>
+                </tr>
+            </tbody>
+
+        </table>
+        <% })}%>
+    </div>
+
+        <% } else {%>
+            <div class="container mx-auto pt-5">
+                <p class="text-center"><a href="/searchCustomer" >Search Customer</a></p>
+            </div>
+
+    
+    <% }}else {  %>
+    <div class="container mx-auto pt-5">
+    <p class="text-center">Please <a href="/login" >login</a> first.</p>
+    </div>
+<% } %>
+
+</div>
+
+</body>
+
+<footer></footer>
+
+</html>

@@ -1,0 +1,205 @@
+
+<%- include ('partials/header.ejs') %>
+<body>
+    <% if(loginStatus) { %>
+        <% if(duplicateVin) { %>
+            <div class="container mx-auto pt-5">
+       
+                <p class="text-center">Duplicate VIN, please check VIN number.</a></p>
+            </div>
+        <% }%>
+        <% if(message) { %>
+            <div class="container mx-auto pt-5">
+       
+                <p class="text-center">Invalid File format. Only 'gif', 'jpeg' and 'png' images are allowed.</a></p>
+            </div>
+        <% }%>
+    <div class="container align-items-center">
+        <h1>Add Vehicle</h1>
+        <form name="searchform" action="/addVehicle" method="POST">
+        
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*VIN: </label>
+            <input type="text" name="vin" class="form-control" placeholder="Add vehicle VIN" aria-describedby="basic-addon1" required>
+        </div>
+
+        <!--make selection-->
+            
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Manufacturer: </label>
+            <input list="makelist" name="make" id="make" class="form-control" >
+            <datalist id="makelist" >
+                <% if (manuf.length > 0) { %> 
+                    <% manuf.forEach((make, index) => { %>            
+                        <option value= <%= encodeURI(make.MANUFACTURER) %> ><%= make.MANUFACTURER %></option> 
+                    <% }) %>
+                <% } %>  
+              </datalist>
+        </div>
+    
+        <!--model selection-->
+        
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Model Name: </label>
+            <select class="form-select" id='model_name' aria-label="Default select" name='model_name'>
+                <option value=''></option>
+            </select>
+        </div>
+
+        <!--ajax, update model-->
+    
+        <script>
+            //point to the selection
+            var make = document.getElementById('make');
+
+            //add event listener to the selection
+            make.addEventListener('change', function(event)
+            {
+            //get the selected value
+            let result = event.target.value;           
+            //create new http request
+            let httpRequest = new XMLHttpRequest();
+            //open
+            httpRequest.open("GET", '/addVehicle/vehicle/ajax?Manufacturer=' + result,true);
+            //send
+            httpRequest.send(null);
+    
+            httpRequest.onreadystatechange = function()
+            {
+                if (httpRequest.readyState == 4 && httpRequest.status ==200)
+                {
+                    var res = eval('('+httpRequest.responseText+')');                    
+                    if(res.length >= 1)
+                    {
+                        //get the model selection
+                        var model_name = document.getElementById("model_name");
+                        model_name.innerHTML = '';
+                        
+                        //create new option
+                        var modelOption = document.createElement("option");
+
+                        //first, insert select 'all model' option
+                        modelOption.text = 'All';
+                        modelOption.value = '';
+                        model_name.add(modelOption);
+
+                        //add model options retrive from the DB
+                        for(var i = 0;i<res.length;i++)
+                        {                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+                            var modelOption = document.createElement("option");
+                            modelOption.text = res[i].model_name;
+                            modelOption.value = res[i].model_name;
+                            model_name.add(modelOption);
+                        }
+                    }            
+                }      
+            }               
+        })
+        </script>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Year: </label>
+            <input type="number" name="model_year" class="form-control" placeholder="Add vehicle year" aria-describedby="basic-addon1" >
+        </div>
+
+        <!--color selection-->
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Color: </label>
+            <input list="colors"  name="color" class="form-control" >
+            <datalist id="colors" >
+                <% if (colors.length > 0) { %>
+                    <% colors.forEach((item, index) => { %>
+                <option value= <%= item.color %> ><%= item.color %></option>
+                    <% }) %>
+                <% } %>
+            </datalist>
+        </div>
+
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Style/Body: </label>
+            <input type="text" name="style" class="form-control" placeholder="Add vehicle style/body" aria-describedby="basic-addon1" >
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Engine: </label>
+            <input type="text" name="engine" class="form-control" placeholder="Add vehicle engine" aria-describedby="basic-addon1">
+        </div>
+
+        <!--vehicle type selection-->
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Type: </label>
+            <input list="types"  name="vehicle_type" class="form-control" required>
+            <datalist id="types" >
+                <% if (types.length > 0) { %>
+                    <% types.forEach((item, index) => { %>
+                <option value= <%= item.vehicle_type %> ><%= item.vehicle_type %></option>
+                    <% }) %>
+                <% } %>
+            </datalist>
+        </div>
+
+    <!--transmission selection-->
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Transmission: </label>
+            <input type="text" name="transmission" class="form-control" placeholder="Add vehicle transmission" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Trim: </label>
+            <input type="text" name="trim" class="form-control" placeholder="Add vehicle trim" aria-describedby="basic-addon1">
+        </div>
+        
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Drive type: </label>
+            <input type="text" name="drive_type" class="form-control" placeholder="Add vehicle drive type" aria-describedby="basic-addon1">
+        </div>
+    
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Seating: </label>
+            <input type="number" name="seats" class="form-control" placeholder="Add number of seats" aria-describedby="basic-addon1" >
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Odormeter Reading: </label>
+            <input type="number" name="odormeter" class="form-control" placeholder="Add odormeter reading" aria-describedby="basic-addon1" >
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*MSRP</label>
+            <input type="number" name="price" class="form-control" placeholder="Add MSRP" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Description</label>
+            <input type="text" name="vehicle_description" class="form-control" placeholder="Add vhicle description" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput">Vehicle Image</label><br>
+            <input type="file" name="image" id="vehicle-img" class="" required>
+        </div>
+
+
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        </form>
+    </div>
+
+
+    <% }else {  %>
+        <div class="container mx-auto pt-5">
+   
+        <p class="text-center">Please <a href="/login" >login</a> first.</p>
+    </div>
+    <% } %>
+
+    
+
+</body>
+
+<footer></footer>
+
+</html>

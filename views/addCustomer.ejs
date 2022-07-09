@@ -1,0 +1,100 @@
+<%- include ('partials/header.ejs') %>
+<body>
+
+    
+    <% if(loginStatus) { %>
+        <% if(duplicateEmail) { %>
+
+            <div class="container mx-auto pt-5">
+       
+                <p class="text-center">Duplicate email address, please <a href="/addCustomer" >try another email address.</a></p>
+            </div>
+    
+        <% } %>
+
+    <div class="container align-items-center">
+        
+        <h1>Add Customer</h1>
+        <form name="searchform" action="/addCustomer" method="POST">
+        
+            
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*First Name: </label>
+            <input type="text" name="firstName" class="form-control" placeholder="Add first name"  aria-describedby="basic-addon1" required>
+        </div>
+    
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Last Name: </label>
+            <input type="text" name="lastName" class="form-control" placeholder="Add last name" aria-describedby="basic-addon1" required>
+        </div>
+
+        
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Phone: </label>
+            <input type="text" name="phone" class="form-control" placeholder="Add phone" aria-describedby="basic-addon1" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Email: </label>
+            <input type="text" name="email" class="form-control" placeholder="Add email" aria-describedby="basic-addon1" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Company: </label>
+            <input type="text" name="company" class="form-control" placeholder="Add company name" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Street: </label>
+            <input type="text" name="street" class="form-control" placeholder="Add street address" aria-describedby="basic-addon1" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Apt/Suite: </label>
+            <input type="text" name="apt_suite" class="form-control" placeholder="Add Apt/Suite " aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*City: </label>
+            <input type="text" name="city" class="form-control" placeholder="Add city" aria-describedby="basic-addon1" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*State: </label>
+            <input type="text" name="state" class="form-control" placeholder="Add state" aria-describedby="basic-addon1" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">*Zipcode: </label>
+            <input type="text" name="zip_code" class="form-control" placeholder="Add zipcode" aria-describedby="basic-addon1" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Note: </label>
+            <input type="text" name="note" class="form-control" placeholder="Add note" aria-describedby="basic-addon1">
+        </div>
+
+
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        </form>
+    </div>
+
+
+    <% }else {  %>
+        <div class="container mx-auto pt-5">
+   
+        <p class="text-center">Please <a href="/login" >login</a> first.</p>
+    </div>
+    <% } %>
+
+    
+
+</body>
+
+<footer></footer>
+
+</html>

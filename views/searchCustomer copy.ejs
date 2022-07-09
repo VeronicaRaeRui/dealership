@@ -1,0 +1,116 @@
+<%- include ('partials/header.ejs') %>
+
+<body>
+
+    <% if(loginStatus) { %>
+    <div class="container align-items-center">
+        
+        <h1>Search Customer</h1>
+        <form name="searchform" action="/searchCustomer" method="POST">
+        
+            
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">First Name: </label>
+            <input type="text" name="firstName" class="form-control" placeholder="Search by first name" aria-describedby="basic-addon1">
+        </div>
+    
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Last Name: </label>
+            <input type="text" name="lastName" class="form-control" placeholder="Search by last name" aria-describedby="basic-addon1">
+        </div>
+
+        
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Phone: </label>
+            <input type="text" name="phone" class="form-control" placeholder="Search by phone" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Email: </label>
+            <input type="text" name="email" class="form-control" placeholder="Search by email" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Company: </label>
+            <input type="text" name="company" class="form-control" placeholder="Search by company name" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+        </form>
+    </div>
+
+
+    <!--display results-->
+    <div class="container align-items-center p-3">
+        <% if (customers.length > 0) { %>
+        <% customers.forEach((customer, index) => { %>
+        <table class="table table-sm w-100  table-borderless mx-auto p-3">
+            
+            <tbody>
+                <tr>
+                    <td class="text-black-50">First Name</td>
+                    <td><%= customer.first_name %></td>
+               
+                    <td class="text-black-50">Last Name</td>
+                    <td><%= customer.last_name %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">Phone</td>
+                    <td><%= customer.phone %></td>
+               
+                    <td class="text-black-50">Email</td>
+                    <td><%= customer.email %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">Address</td>
+                    <td><%= customer.street %> <%= customer.apt_suite %> </td>
+              
+                    <td class="text-black-50">City</td>
+                    <td><%= customer.city %></td>
+                </tr>
+
+                <tr>
+                    <td class="text-black-50">State</td>
+                    <td><%= customer.state %></td>
+                 
+                    <td class="text-black-50">Zip code</td>
+                    <td><%= customer.zip_code %></td>
+                </tr>
+                
+                <tr>    
+                    <td class="text-black-50">Company</td>
+                    <td><%= customer.company %></td>
+                  
+                    <td class="text-black-50">Note</td>
+                    <td><%= customer.note %></td>
+                </tr>
+
+            </tbody>
+            
+
+        </table>
+        <% }) %>
+
+        <% } else {if(methodPost) { %>
+            <div class="container mx-auto pt-5">
+            <p class="text-center">No customers found. Go <a href="/addCustomer" >here</a> to add customer.</p>
+            </div>    
+        <% } }%>
+
+    </div>
+    <% }else {  %>
+    <div class="container mx-auto pt-5">
+    <p class="text-center">Please <a href="/login" >login</a> first.</p>
+    </div>
+<% } %>
+
+</body>
+
+<footer></footer>
+
+</html>

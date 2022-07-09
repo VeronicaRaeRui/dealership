@@ -1,0 +1,120 @@
+<%- include ('partials/header.ejs') %>
+<body>
+    <div class="container align-items-center">
+        <% if(loginStatus) { %>
+    <img src= "/assets/img/WDDWJ6EBXKF802436.jpeg" class="rounded mx-auto d-block pt-1 pb-3" alt="/assets/img/WDDWJ6EBXKF802436.jpeg">
+    </div>
+    <div class="container align-items-center w-75 ">
+        <h4>Vehicle Information</h4>
+        <table class="table table-sm  table-borderless mx-auto p-3">
+            <thead>
+                <tr>
+                <th scope="col" colspan="2"><h3><%= vehicle.model_year %> <%= vehicle.manufacturer %> <%= vehicle.model_name %></h3></th>  
+                </tr>
+                
+            </thead>
+        <tbody>
+            <tr>
+                <td class="text-black-50">VIN</td>
+                <td><%= vehicle.VIN %></td>
+                <td class="text-black-50">Type</td>
+                <td><%= vehicle.vehicle_type%></td>
+            </tr>
+            <tr>
+                <td class="text-black-50">Make</td>
+                <td><%= vehicle.manufacturer %></td>
+                <td class="text-black-50">Transmission</td>
+                <td><%= vehicle.transmission %></td>
+            </tr>
+            <tr>
+                <td class="text-black-50">Model</td>
+                <td><%= vehicle.model_name %></td>
+                <td class="text-black-50">Drive Type</td>
+                <td><%= vehicle.drive_type %></td>
+            </tr>
+            <tr>
+                <td class="text-black-50">Trim</td>
+                <td><%= vehicle.trim %></td>
+                <td class="text-black-50">Odormeter</td>
+                <td><%= vehicle.ordermeter_reading %></td>
+            </tr>
+
+            <tr>
+                <td class="text-black-50">Year</td>
+                <td><%= vehicle.model_year %></td>
+                <td class="text-black-50">Color</td>
+                <td><%= vehicle.color %></td>
+            </tr>
+
+            <tr>
+                <td class="text-black-50">Style/Body</td>
+                <td><%= vehicle.style_body %></td>
+                <td class="text-black-50">Seating</td>
+                <td><%= vehicle.seats %></td>
+            </tr>
+            <tr>
+                <td class="text-black-50">Engine</td>
+                <td><%= vehicle.engine %></td>
+                <td class="text-black-50">MSRP</td>
+                <td>$<%= vehicle.invoice_price %></td>
+            </tr>
+
+        </tbody>
+        </table>
+    </div>
+    <div class="container align-items-center w-75 ">
+        <h4>Service Information</h4>
+        <p>Please close unfinished service request before open a new one</p>
+        <% if(errorMessage) { %> 
+        <p class="text"><a href="/searchCustomer"><%= errorMessage%></a></p> 
+        <% } %>
+        <table class="table table-sm w-75  table-borderless mx-auto p-3">
+        <form name="searchform" action="" method="POST">
+
+            <div class="mb-3 w-75 ">
+                <label for="formControlInput" class="form-label">Start Date: </label>
+                <input type="text" name="startDate" class="form-control" value = "<%= startDate %>" aria-describedby="basic-addon1" required>
+            </div>
+
+            <div class="mb-3 w-75 ">
+                <label for="formControlInput" class="form-label">Customer Id: </label>
+                <input type="number" name="customerID" class="form-control"  value = "<%= service.customer_id %>" aria-describedby="basic-addon1" required>
+            </div>
+
+            <div class="mb-3 w-75">
+                <label for="formControlInput" class="form-label">Odometer Reading: </label>
+                <input type="number" name="odometerReading" class="form-control" value = "<%= service.odometer_reading %>" aria-describedby="basic-addon1" required>
+                
+            </div>
+
+            <div class="mb-3 w-75">
+                <label for="formControlInput" class="form-label">Labor Charge: </label>
+                <input type="number" name="laborCharge" class="form-control"  value = "<%= service.labor_charge %>" aria-describedby="basic-addon1" required>
+                
+            </div>
+
+            <div class="mb-3 w-75 ">
+                <label for="formControlInput" class="form-label">Service Description: </label>
+                <input type="text" name="description" class="form-control" value = "<%= service.repair_description %>" aria-describedby="basic-addon1" required>
+            </div>
+
+            <div class="mb-3">
+                <td><button type="submit" formaction = "/updateService/<%=  vehicle.VIN%>" class="btn btn-primary">Submit</button></td>
+                <td><button type="submit" formaction = "/closeService/<%=  vehicle.VIN%>" class="btn btn-primary">Close Service</button></td>
+            </div>
+
+        </form>
+        </table>
+<%} else {%>
+    <div class="container mx-auto pt-5">
+   
+        <p class="text-center">Please <a href="/login" >login</a> first.</p>
+    </div>
+    <% } %>
+    </div>
+
+</body>
+
+<footer></footer>
+
+</html>

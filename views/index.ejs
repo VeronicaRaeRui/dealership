@@ -1,0 +1,279 @@
+<%- include ('partials/header.ejs') %>
+<body>
+    <div class="container align-items-center">
+        
+        <h1>Search Vehicle</h1>
+        <form name="searchform" action="/search" method="GET">
+
+        <% if(loginStatus) { %>
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">VIN: </label>
+            <input type="text" name="VIN" class="form-control" placeholder="Search by VIN" aria-describedby="basic-addon1">
+        </div>
+        <% } %>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Vehicle Type: </label>
+            <select class="form-select" aria-label="Default select" name="vehicle_type">
+                <option value="" selected>All</option>
+                <option value="Car">Car</option>
+                <option value="Truck">Truck</option>
+                <option value="Suv">SUV</option>
+                <option value="Van">Van/Minivan</option>
+                <option value="Convertible">Convertible</option>
+              </select>
+        </div>
+
+        <!--make selection-->
+        
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Manufacturer: </label>
+            <select class="form-select" aria-label="Default select" id= 'make'name="Manufacturer">
+                <option value="" selected>All</option>
+                <% if (manuf.length > 0) { %>
+                    <% manuf.forEach((make, index) => { %>            
+                <option value= <%= encodeURI(make.MANUFACTURER) %> ><%= make.MANUFACTURER %></option>
+                    <% }) %>
+                <% } %>
+            </select>
+        </div>
+
+        <!--model selection-->
+        
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Model Name: </label>
+            <select class="form-select" id='model_name' aria-label="Default select" name='model_name'>
+                <option value=''></option>
+            </select>
+        </div>
+
+        <!--ajax, update model-->
+    
+        <script>
+            //point to the selection
+            var make = document.getElementById('make');
+
+            //add event listener to the selection
+            make.addEventListener('change', function(event)
+            {
+            //get the selected value
+            let result = event.target.value;           
+            //create new http request
+            let httpRequest = new XMLHttpRequest();
+            //open
+            httpRequest.open("GET", '/search/vehicle/ajax?Manufacturer=' + result,true);
+            //send
+            httpRequest.send(null);
+    
+            httpRequest.onreadystatechange = function()
+            {
+                if (httpRequest.readyState == 4 && httpRequest.status ==200)
+                {
+                    var res = eval('('+httpRequest.responseText+')');                    
+                    if(res.length >= 1)
+                    {
+                        //get the model selection
+                        var model_name = document.getElementById("model_name");
+                        model_name.innerHTML = '';
+                        
+                        //create new option
+                        var modelOption = document.createElement("option");
+
+                        //first, insert select 'all model' option
+                        modelOption.text = 'All';
+                        modelOption.value = '';
+                        model_name.add(modelOption);
+
+                        //add model options retrive from the DB
+                        for(var i = 0;i<res.length;i++)
+                        {
+                            var modelOption = document.createElement("option");
+                            modelOption.text = res[i].model_name;
+                            modelOption.value = res[i].model_name;
+                            model_name.add(modelOption);
+                        }
+                    }            
+                }      
+            }               
+        })
+        </script>
+        
+        <!--year selection-->
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Model Year: </label>
+            <select class="form-select" aria-label="Default select" name = 'model_year'>
+                <option value="" selected>All</option>
+                <% if (model_years.length > 0) { %>
+                    <% model_years.forEach((item, index) => { %>
+                <option value= <%= item.model_year %> ><%= item.model_year %></option>
+                    <% }) %>
+                <% } %>
+            </select>
+        </div>
+        <!--color selection-->
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Color: </label>
+            <select class="form-select" aria-label="Default select" name = 'color'>
+                <option value="" selected>All</option>
+                <% if (colors.length > 0) { %>
+                    <% colors.forEach((item, index) => { %>
+                <option value= <%= item.color %> ><%= item.color %></option>
+                    <% }) %>
+                <% } %>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Price Range Minimal: </label>
+            <input type="number" id = "price1" step = "0.01" min = "0" name="price1" class="form-control" placeholder="Enter the minimal value of the vehicle" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Price Range Maximal: </label>
+            <input type="number" id = "price2" step = "0.01" min = "0" name="price2" class="form-control" placeholder="Enter the maximal value of the vehicle" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="mb-3">
+            <label for="formControlInput" class="form-label">Key Word:</label>
+            <input type="text" id = "keyword" name="keyword" class="form-control" placeholder="Enter the key, split by space" aria-describedby="basic-addon1">
+        </div>
+
+        <% if(loginStatus) { %>
+            <div class="mb-3">
+                <label for="formControlInput" class="form-label">Status: </label>
+                <select class="form-select" aria-label="Default select" name = 'status'>
+                    <option value="all" >All</option>
+                    <option value="sold"> Sold</option>
+                    <option value="unsold" selected>Unsold</option>
+                </select>
+    
+            </div>
+        <% } %>
+       
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+        </form>
+    </div>
+
+    <!--display results-->
+    <div class="container align-items-center">
+        <div class="row pt-0 pb-0" style="height: 25px;">
+            <div class="d-flex justify-content-start">
+            <% if ( numberOfRecords ) { %>   
+                <p class="ml-0 pl-0 mt-0 mb-0 pt-0 pb-0">Found <%= numberOfRecords %> vehicles.</p>                      
+            <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="container align-items-center">
+
+        <% if (vehicles.length > 0) { %>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                <th scope="col">Make</th> 
+                <th scope="col">Vehicle</th> 
+                <th scope="col">Trim</th>
+                <th scope="col">Color</th>
+                <th scope="col">Mileage</th>
+                <th scope="col">Price</th>
+                <th scope="col">Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% vehicles.forEach((vehicle, index) => { %>
+                    <tr>
+                        <td><a href=<%= "/detail/" + vehicle.VIN %>><%= vehicle.manufacturer%></a></th>
+                        <td><a href=<%= "/detail/" + vehicle.VIN %>><%= vehicle.model_year %> <%= vehicle.manufacturer%> <%= vehicle.model_name %></th>
+                        <td><%= vehicle.trim %></th>
+                        <td><%= vehicle.color %></td>
+                        <td><%= vehicle.ordermeter_reading %></td>
+                        <td>$<%= vehicle.invoice_price %> </td>
+                        <td><%= vehicle.vehicle_type %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+        <% } else { %>
+            <p class="text-center">No vehicles found.</p>
+        <% } %>
+    </div>
+
+    <!--pagination-->
+    
+    <ul class="pagination justify-content-center">
+
+      
+        <% if(page == 1) {  %> 
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+          </li>
+        <%  }else { %>    
+
+            <% if(loginStatus) { %>
+            <li class="page-item">
+                <a class="page-link" href="/search?page=<%=page-1%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>&status=<%=status%>&color=<%=color%>&keyword=<%=keyword%>"  >Previous</a>
+            </li>
+            <%  } else {%> 
+            <li class="page-item">
+                <a class="page-link" href="/search?page=<%=page-1%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>&color=<%=color%>&keyword=<%=keyword%>" >Previous</a>
+            </li>
+             <%  }%>
+        <%  }%> 
+           
+        <% for(let i = iteratorStart; i <= iteratorEnd; i++) { %>
+            <% if(i === page) { %>
+                <!--if user logged in, include the status parameter-->
+                <% if(loginStatus) { %>
+                <li class="page-item active" aria-current="page">
+                    <a class="page-link" href="/search?page=<%=i%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>&status=<%=status%>&color=<%=color%>&keyword=<%=keyword%>"><%=i%></a>
+                </li>
+                <% } else {%> 
+                    <!--if user isn't logged in, exclude the status parameter-->
+                    <li class="page-item active" aria-current="page">
+                        <a class="page-link" href="/search?page=<%=i%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>&color=<%=color%>&keyword=<%=keyword%>"><%=i%></a>
+                    </li>
+                <%  } %>  
+            <% continue; } %> 
+            
+            <% if(loginStatus) { %>
+            <li class="page-item"><a class="page-link" href="/search?page=<%=i%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>&status=<%=status%>&color=<%=color%>&keyword=<%=keyword%>"><%=i%></a></li>
+            <% } else {%> 
+                <li class="page-item"><a class="page-link" href="/search?page=<%=i%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>&color=<%=color%>&keyword=<%=keyword%>"><%=i%></a></li>
+            <%  } %>  
+            <% } %>
+        
+        <% if(page == numberOfPages) { %> 
+        <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Next</a>
+            </li>
+        <%  }else { %>   
+
+        <% if(loginStatus) { %>
+        <li class="page-item">
+            <a class="page-link" href="/search?page=<%=page+1%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>&status=<%=status%>&color=<%=color%>&keyword=<%=keyword%>">Next</a>
+        </li>
+        <% } else {%> 
+        <li class="page-item">
+            <a class="page-link" href="/search?page=<%=page+1%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>&color=<%=color%>&keyword=<%=keyword%>">Next</a>
+        </li>
+
+        <% }%>
+        <% }%>
+    </ul>
+<!--
+        <li class="page-item">
+            <a class="page-link" href="/search?page=<%=numberOfPages%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>">Last</a>
+        </li>
+-->       
+<!--    <li class="page-item">
+            <a class="page-link" href="/search?page=<%=1%>&vehicle_type=<%=vehicle_type%>&Manufacturer=<%=Manufacturer%>&model_name=<%=model_name%>&model_year=<%=model_year%>&price1=<%=price1%>&price2=<%=price2%>">First</a>
+        </li>
+  -->  
+  
+</body>
+
+<footer></footer>
+
+</html>

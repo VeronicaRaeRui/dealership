@@ -35,6 +35,7 @@ router.get('/search', searchController.homeSearch);
 //Vehicle detail
 router.get('/detail/:VIN', detailController.detail);
 
+router.post('/detail/:VIN', detailController.detail);
 //ajax, update model name based on make on search vehicle page
 router.get('/search/vehicle/ajax', searchController.ajax);
 

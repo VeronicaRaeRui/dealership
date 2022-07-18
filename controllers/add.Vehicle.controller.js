@@ -4,7 +4,6 @@ exports.addVehiclePage = (req, res) => {
 
     //check if logged in
     let loginStatus = req.session.loginStatus || false;
-    let duplicateVin = req.session.duplicateVin || false;
     let message = req.session.message || false;
 
     //make_query, year_query, color_query, type_query retrive corresponding items from database for dynamic selection
@@ -28,7 +27,6 @@ exports.addVehiclePage = (req, res) => {
 
         res.render('addVehicle.ejs',
         { loginStatus, 
-        duplicateVin,
         message,
         manuf:results[0],
         colors:results[1],
@@ -44,13 +42,12 @@ exports.addVehiclePage = (req, res) => {
 exports.addVehicle = (req, res)=>
 {
     
-    // if (!req.files) {
-    //     return res.status(400).send("No files were uploaded.");
-    // }
+    if (!req.files) {
+        return res.status(400).send("No files were uploaded.");
+    }
 
     // get vehicle information
-    let loginStatus = true ;
-    let message = req.session.message;
+
     let username = req.session.user;
     let vin = req.body.vin;
     let make = req.body.make;
@@ -67,10 +64,9 @@ exports.addVehicle = (req, res)=>
     let odormeter = req.body.odormeter;
     let price = req.body.price;
     let vehicle_description = req.body.vehicle_description
-    // let uploadedFile = req.files.image;
-    // let fileExtension = uploadedFile.mimetype.split('/')[1];
-    // let image_name = vin+'.' +fileExtension;
-    let image_name = '561561.jpg'
+    let uploadedFile = req.files.image;
+    let fileExtension = uploadedFile.mimetype.split('/')[1];
+    let image_name = vin+'.' +fileExtension;
     // get date
     let today = new Date();
     let date = today.getFullYear() + '-' +today.getMonth() + '-' + today.getDate();
@@ -90,7 +86,7 @@ exports.addVehicle = (req, res)=>
             })
         }
         else{
-            req.session.message = true;
+            req.session.message = "Invalid File format. Only 'gif', 'jpeg' and 'png' images are allowed.";
             res.redirect('/addVehicle');
             return;
         }
@@ -103,8 +99,11 @@ exports.addVehicle = (req, res)=>
                 if(err.errno == 1062)
                 {
                     //set duplicateVin = ture, redirect to addVehicle using GET
-                    req.session.duplicateVin = true;
+                    req.session.message = "duplicate VIN number.";;
                     res.redirect('/addVehicle');
+                }
+                else{
+                    return res.status(500).send(err);
                 }   
             }
 
@@ -112,8 +111,7 @@ exports.addVehicle = (req, res)=>
             {
                 //add vehicle successfully, redirect to vehicle detail page
                 console.log(results);
-                req.session.VIN = vin;
-                res.redirect('/detail');
+                res.redirect('/detail/'+vin);
             }
         }) 
 

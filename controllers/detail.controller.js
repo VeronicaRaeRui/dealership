@@ -5,7 +5,7 @@ exports.detail = (req, res) => {
     let loginStatus = req.session.loginStatus || false;
 
     //Vehicle vin
-    let VIN = req.params.VIN || req.session.VIN ||false;
+    let VIN = req.params.VIN || req.session.VIN || req.body.VIN || false ;
 
     //query to search vehicle detail in vehicle table
     let vehicleQuery = ` SELECT * FROM vehicle WHERE  VIN = '${VIN}'  `;
@@ -15,16 +15,16 @@ exports.detail = (req, res) => {
         if (err) {
             console.log(err);
             return res.send(err);
-            //res.redirect('/');
+
         }
-        //console.log(results[0]);
+        
         if(results[0] == undefined)
         {
             res.render('detail.ejs', {noVehicleFound :true,
                 loginStatus});
         }else{
 
-        //vehicle type
+        
         let type = results[0].vehicle_type;
         let detail = results[0];
 
@@ -36,9 +36,9 @@ exports.detail = (req, res) => {
         db.query(query, (err, results) => 
         {
             if (err) {
-                //console.log(err);
+                
                 return res.send(err);
-                //res.redirect('/');
+               
             }
             
             res.render('detail.ejs', {vehicle: detail,

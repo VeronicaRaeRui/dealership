@@ -2,21 +2,15 @@
 <%- include ('partials/header.ejs') %>
 <body>
     <% if(loginStatus) { %>
-        <% if(duplicateVin) { %>
-            <div class="container mx-auto pt-5">
-       
-                <p class="text-center">Duplicate VIN, please check VIN number.</a></p>
-            </div>
-        <% }%>
         <% if(message) { %>
             <div class="container mx-auto pt-5">
        
-                <p class="text-center">Invalid File format. Only 'gif', 'jpeg' and 'png' images are allowed.</a></p>
+                <p class="text-center"><%= message%></p>
             </div>
         <% }%>
     <div class="container align-items-center">
         <h1>Add Vehicle</h1>
-        <form name="searchform" action="/addVehicle" method="POST">
+        <form name="searchform" action="/addVehicle" method="POST" enctype="multipart/form-data">
         
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*VIN: </label>
@@ -27,7 +21,7 @@
             
         <div class="mb-3">
             <label for="formControlInput" class="form-label">Manufacturer: </label>
-            <input list="makelist" name="make" id="make" class="form-control" >
+            <input list="makelist" name="make" id="make" class="form-control" required>
             <datalist id="makelist" >
                 <% if (manuf.length > 0) { %> 
                     <% manuf.forEach((make, index) => { %>            
@@ -41,13 +35,13 @@
         
         <div class="mb-3">
             <label for="formControlInput" class="form-label">Model Name: </label>
-            <select class="form-select" id='model_name' aria-label="Default select" name='model_name'>
-                <option value=''></option>
-            </select>
+            <input list="modellist" name="model_name" id="model_name" class="form-control" required>
+            <datalist id = 'modellist'>
+
+            </datalist>
         </div>
 
         <!--ajax, update model-->
-    
         <script>
             //point to the selection
             var make = document.getElementById('make');
@@ -71,10 +65,16 @@
                     var res = eval('('+httpRequest.responseText+')');                    
                     if(res.length >= 1)
                     {
+
                         //get the model selection
                         var model_name = document.getElementById("model_name");
                         model_name.innerHTML = '';
-                        
+
+                        var dataList = document.createElement("datalist");
+                        dataList.id = 'modellist';
+                        model_name.add(dataList);
+
+
                         //create new option
                         var modelOption = document.createElement("option");
 
@@ -99,13 +99,13 @@
 
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*Year: </label>
-            <input type="number" name="model_year" class="form-control" placeholder="Add vehicle year" aria-describedby="basic-addon1" >
+            <input type="number" name="model_year" class="form-control" placeholder="Add vehicle year" aria-describedby="basic-addon1"  required>
         </div>
 
         <!--color selection-->
         <div class="mb-3">
             <label for="formControlInput" class="form-label">Color: </label>
-            <input list="colors"  name="color" class="form-control" >
+            <input list="colors"  name="color" class="form-control" required >
             <datalist id="colors" >
                 <% if (colors.length > 0) { %>
                     <% colors.forEach((item, index) => { %>
@@ -118,56 +118,106 @@
 
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*Style/Body: </label>
-            <input type="text" name="style" class="form-control" placeholder="Add vehicle style/body" aria-describedby="basic-addon1" >
+            <input list="style" type="text" name="style" class="form-control" placeholder="Add vehicle style/body" aria-describedby="basic-addon1" required >
+            <datalist id="style">
+                <option value="Sedan">Sedan</option>
+                <option value="Coupe">Coupe</option>
+                <option value="Sports Car">Sports Car</option>
+                <option value="Station Wagon">Station Wagon</option>
+                <option value="Hatchback">Hatchback</option>
+                <option value="Convertible">Convertible</option>
+                <option value="SUV">SUV</option>
+                <option value="Minivan">Minivan</option>
+                <option value="Truck">Truck</option>
+            </datalist>
         </div>
 
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*Engine: </label>
-            <input type="text" name="engine" class="form-control" placeholder="Add vehicle engine" aria-describedby="basic-addon1">
+            <input type="text" name="engine" class="form-control" placeholder="Add vehicle engine" aria-describedby="basic-addon1" required>
         </div>
 
         <!--vehicle type selection-->
         <div class="mb-3">
-            <label for="formControlInput" class="form-label">*Type: </label>
-            <input list="types"  name="vehicle_type" class="form-control" required>
-            <datalist id="types" >
-                <% if (types.length > 0) { %>
-                    <% types.forEach((item, index) => { %>
-                <option value= <%= item.vehicle_type %> ><%= item.vehicle_type %></option>
-                    <% }) %>
-                <% } %>
-            </datalist>
+            <label for="formControlInput" class="form-label">Vehicle Type: </label>
+            <select class="form-select" aria-label="Default select" name="vehicle_type" required>
+                <option value="Car">Car</option>
+                <option value="Truck">Truck</option>
+                <option value="Suv">SUV</option>
+                <option value="Van">Van/Minivan</option>
+                <option value="Convertible">Convertible</option>
+              </select>
         </div>
 
-    <!--transmission selection-->
+        <!--transmission selection-->
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*Transmission: </label>
-            <input type="text" name="transmission" class="form-control" placeholder="Add vehicle transmission" aria-describedby="basic-addon1">
+            <input list="transmission"  name="transmission" class="form-control" required >
+            <datalist id="transmission" >
+                <option value="Manual Transmission">Manual Transmission</option>
+                <option value="Automatic Transmission">Automatic Transmission</option>
+                <option value="Continuously Variable Transmission (CVT)">Continuously Variable Transmission (CVT)</option>
+                <option value="Dual-Clutch Transmission">Dual-Clutch Transmission</option>
+                <option value="Semi-Automatic Transmission">Semi-Automatic Transmission</option>
+            </datalist>
+        
         </div>
 
+        <!--Trim-->
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*Trim: </label>
-            <input type="text" name="trim" class="form-control" placeholder="Add vehicle trim" aria-describedby="basic-addon1">
+            <input list="trim" type="text" name="trim" class="form-control" placeholder="Add vehicle trim" aria-describedby="basic-addon1" required>
+            <datalist id="trim">
+                <option value="CE">CE</option>
+                <option value="DX">DX</option>
+                <option value="DL">DL</option>
+                <option value="EX">EX</option>
+                <option value="GL">GL</option>
+                <option value="GLE">GLE</option>
+                <option value="GT">GT</option>
+                <option value="LX">LX</option>
+                <option value="LE">LE</option>
+                <option value="LS">LS</option>
+                <option value="LT">LT</option>
+                <option value="LTD">LTD</option>
+                <option value="LTZ">LTZ</option>
+                <option value="SE">SE</option>
+                <option value="SL">SL</option>
+                <option value="SLE">SLE</option>
+                <option value="SLT">SLT</option>
+                <option value="SV">SV</option>
+                <option value="XLT">XLT</option>
+            </datalist>
         </div>
         
+        <!--Drive Type-->
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*Drive type: </label>
-            <input type="text" name="drive_type" class="form-control" placeholder="Add vehicle drive type" aria-describedby="basic-addon1">
+            <input list="drivetype" type="text" name="drive_type" class="form-control" placeholder="Add vehicle drive type" aria-describedby="basic-addon1" required>
+            <datalist id = "drivetype">
+                <option value="AWD">AWD</option>
+                <option value="FWD">FWD</option>
+                <option value="RWD">RWD</option>
+                <option value="4WD">4WD</option>
+            </datalist>
         </div>
     
+        <!--Seating-->
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*Seating: </label>
-            <input type="number" name="seats" class="form-control" placeholder="Add number of seats" aria-describedby="basic-addon1" >
+            <input type="number" name="seats" class="form-control" placeholder="Add number of seats" aria-describedby="basic-addon1" required>
         </div>
 
+        <!--Odormeter reading-->
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*Odormeter Reading: </label>
-            <input type="number" name="odormeter" class="form-control" placeholder="Add odormeter reading" aria-describedby="basic-addon1" >
+            <input type="number" name="odormeter" class="form-control" placeholder="Add odormeter reading" aria-describedby="basic-addon1" required >
         </div>
 
+        <!-- msrp -->
         <div class="mb-3">
             <label for="formControlInput" class="form-label">*MSRP</label>
-            <input type="number" name="price" class="form-control" placeholder="Add MSRP" aria-describedby="basic-addon1">
+            <input type="number" name="price" class="form-control" placeholder="Add MSRP" aria-describedby="basic-addon1" required>
         </div>
 
         <div class="mb-3">
